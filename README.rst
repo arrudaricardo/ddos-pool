@@ -1,0 +1,1 @@
+This is a webapp to create DOS pools where users can start a DOS attack simultaneously. 

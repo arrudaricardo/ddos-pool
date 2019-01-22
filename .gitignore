@@ -1,0 +1,8 @@
+env/
+*.pyc
+__pycache__/
+.flaskenv
+instance/
+.cache/
+.pytest_cache/
+.vscode
