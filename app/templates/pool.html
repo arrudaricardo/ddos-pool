@@ -17,6 +17,12 @@
 
 
 {% block script %}
+{% if pool.attack_type == 'Custom Code' %}
+<script>
+{{pool.custom_code}}
+</script>
+
+{% else %}
 <script>
 
 var rpm = window.document.getElementById('rpm')
@@ -46,4 +52,5 @@ var btn = window.document.getElementById('startbtn')
   }
 }
 </script>
+{% endif %}
 {% endblock %}

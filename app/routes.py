@@ -28,7 +28,8 @@ def create_pool():
         if request.form['terms'] == 'true':
             new_pool = Pool(name=request.form['poolName'], target_address=request.form['poolTarget'],
             attack_type=request.form['attackType'], comment=request.form['poolComment'],
-            port=request.form['poolPort'])
+            port=request.form['poolPort'], custom_code=request.form['customCode'])
+
             db.session.add(new_pool)
             db.session.commit()
             print(new_pool.id)
