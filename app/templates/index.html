@@ -1,4 +1,49 @@
-<html>
+{% extends "base.html" %}
 
-<h1>Hello</h1>
-</html>
+{% block content %}
+<div>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">DDOS Pools</h1>
+        <h2 class="subtitle">
+            Create or participate into a ddos Attack.
+        </h2>
+
+
+
+        </div>
+    </div>
+</section>
+
+
+<div class="container is-widescreen">
+        <div class="container">
+            Create new Attack Pool
+            <div><a class="button" id='createBtn'>Create</a>
+            </div>
+        </div>
+
+        <div class="container is-widescreen">
+                <div class="container">
+                    Last Pools
+                    </div>
+                </div>
+
+                <div class="container is-widescreen">
+                        <div class="container">
+                            Popular Pools
+                  </div>
+                </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript">
+    document.getElementById("createBtn").onclick = function () {
+        location.pathname = '/create';
+    };
+</script>
+{% endblock %}

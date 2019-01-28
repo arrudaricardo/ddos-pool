@@ -6,3 +6,4 @@ instance/
 .cache/
 .pytest_cache/
 .vscode
+*.db

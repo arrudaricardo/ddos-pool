@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form id='createForm' class='column is-two-fifths'>
+
+        <div class="field ">
+            <label class="label">Name:</label>
+            <div class="control form">
+                <input id='poolName' class="input" type="text" placeholder="Pool Name">
+            </div>
+            <p class="help"></p>
+        </div>
+
+        <div class="field ">
+            <label class="label">Target:</label>
+            <div class="control is-flex">
+                <input id='poolTarget' class="input column is-three-quarters" type="text" placeholder="Target Adress">
+                <input id='poolPort' class="input" type="text" placeholder="Port">
+
+            </div>
+            <p class="help">e.g Target:http://www.exemple.com, port:80</p>
+        </div>
+
+        <div class="field ">
+            <label class="label">Comment:</label>
+            <div class="control">
+                <input id='poolComment' class="input" type="text" placeholder="Reason of the Attack">
+            </div>
+            
+        </div>
+
+        <div class="control container is-block">
+                <label class="label">Attack Method:</label>
+            <div class="select">
+                <select id='attackType'>
+                    <option>GET flood attack</option>
+                    <option>Custom Code</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="container" style="padding-top:1em"> 
+        <label class="checkbox ">
+            <input id='terms' type="checkbox">
+            I agree to the <a href="#">terms and conditions</a>
+        </label>
+        <div style="padding:0.5em">
+            <button id='createBtn'type='submit' class="button">Create</button> 
+        </div>
+    </div>
+
+    </form>
+
+
+    <div id='customCodeModal' class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Custom Code</p>
+                <button class="delete close" aria-label="close"></button>
+              </header>
+              <section class="modal-card-body">
+                <!-- Content ... -->
+                <textarea class="textarea" placeholder="javascript Code."></textarea>
+
+              </section>
+              <footer class="modal-card-foot">
+                <button class="button is-success">Save changes</button>
+                <button class="button close">Cancel</button>
+              </footer>
+            </div>
+          </div>
+
+
+    
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    //create Pool
+let objx;
+    window.document.getElementById('createBtn').onclick = function () {
+
+        var formData = new FormData(document.querySelectorAll('form'))
+
+        // $.post("{{url_for('create_pool')}}", data).done(function (data) {
+        //     //window.location.replace("");
+        // })
+
+  
+
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+        if (xhttp.readyState === 4) {
+        console.log(xhttp.response)
+        window.location.href = xhttp.responseURL
+       
+        }
+        }
+
+        xhttp.open("POST", "{{url_for('create_pool')}}", true);
+        xhttp.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+
+        xhttp.send('poolName='+$('#poolName').val()+
+        '&'+'poolTarget='+$('#poolTarget').val()+
+        '&'+'attackType='+$('#attackType').val()+
+        '&'+'terms='+$('#terms').prop("checked")+
+        '&'+'poolComment='+$('#poolComment').val()+
+        '&'+'poolPort='+$('#poolPort').val())
+    };
+
+
+    document.getElementById('attackType').onchange = function(){
+
+        if ($('#attackType').val() == 'Custom Code'){
+
+            $('#customCodeModal').addClass('is-active') 
+
+        }
+    }
+    $('.close').click(function(){
+
+        $('#customCodeModal').removeClass('is-active') 
+    }
+    );
+
+</script>
+{% endblock %}
