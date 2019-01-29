@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{pool.name}}</h1>
+<div class='columns'> 
+  <div class='column'> 
+    <h2>{{pool.name}}</h1>
 
-<div id='pool-target'>Target: {{pool.target_address}} </div>
-<div id='pool-comment'>Comment: {{pool.comment}}</div>
-<div id='pool-rpm' >RPM: <div style="display: inline;" id='rpm'>{{pool.rpm}}</div> </div>
-<div id='pool-name'>Number Attackers {{pool.number_attackers}}</div>
+    <div id='pool-target'>Target: {{pool.target_address}} </div>
+    <div id='pool-comment'>Comment: {{pool.comment}}</div>
+    <div id='pool-rpm' >RPM: <div style="display: inline;" id='rpm'>{{pool.rpm}}</div> </div>
+    <div id='pool-name'>Number Attackers {{pool.number_attackers}}</div>
 
-<input id='speed' type="number">
-<button id='startbtn'>Start</button>
+    <input id='speed' type="number">
+    <button id='startButton'>Start Attack</button>
+  </div>
+  <div class='column'>
 
+  </div>
 </div>
 
 {% endblock %}
@@ -18,12 +23,17 @@
 
 {% block script %}
 {% if pool.attack_type == 'Custom Code' %}
-<script>
-{{pool.custom_code}}
+<script id='customCode' type=text/javascript>
+{{ pool.custom_code|safe }}
+</script>
+
+
+<script type=text/javascript>
+let customCode = $('#customCode').val()
 </script>
 
 {% else %}
-<script>
+<script type=text/javascript>
 
 var rpm = window.document.getElementById('rpm')
 
@@ -36,9 +46,9 @@ function attack(){
 
 }
 let attackInterval;
-window.document.getElementById('startbtn').onclick = function(){
+window.document.getElementById('startButton').onclick = function(){
 var speed = window.document.getElementById('speed').value
-var btn = window.document.getElementById('startbtn')
+var btn = window.document.getElementById('startButton')
 
   if (btn.innerText == 'Start'){
   btn.innerText = 'Stop'

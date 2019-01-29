@@ -26,15 +26,23 @@ def create_pool():
 
         # create Pool in DB
         if request.form['terms'] == 'true':
-            new_pool = Pool(name=request.form['poolName'], target_address=request.form['poolTarget'],
-            attack_type=request.form['attackType'], comment=request.form['poolComment'],
-            port=request.form['poolPort'], custom_code=request.form['customCode'])
+            if request.form['attackType'] == 'Custom Code':
+                custom_code = request.form['customCode']
+            else:
+                custom_code = None
+
+            new_pool = Pool(name=request.form['poolName'],
+            target_address=request.form['poolTarget'],
+            attack_type=request.form['attackType'],
+            comment=request.form['poolComment'],
+            port=request.form['poolPort'],
+            custom_code=custom_code)
 
             db.session.add(new_pool)
             db.session.commit()
             print(new_pool.id)
 
-            return redirect(url_for('get_pool', poolid=new_pool.id), code=301)
+            return redirect(url_for('get_pool', poolid=new_pool.id, code=305))
         else:
-            return 'erro'
+            return jsonify(error='erro')
 
