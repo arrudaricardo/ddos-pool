@@ -2,24 +2,35 @@
 
 {% block content %}
 <div class="container" style="padding:4em;">
-<h1 >DDOS Pools</h1>
-<h2> Create or join into a <a href="https://en.wikipedia.org/wiki/Denial-of-service_attack">DOS</a> Attack Pools.</h2>
+    <h1>DDOS Pools</h1>
+    <h2> Create or join a <a href="https://en.wikipedia.org/wiki/Denial-of-service_attack">DOS</a> Attack Pools.</h2>
 
-<div class="container">
-
-    <div class="columns">
-        <div class="column col-5">
-            <div> <div class="btn" id='createBtn'>Create</div> new Attack Pool</div>
-            
+    <div class="container">
+        <div class="columns">
+            <div class="column col-5 py-2 my-2">
+                <div>
+                    <div class="btn" id='createBtn'>Create</div> new Attack Pool
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="columns">
-        <div class="column">
+        <div class="mx-1 "> Last Pools:</div>
+        <div class="columns">
             {% for pool in pools%}
-            <div> {{pool.id}}</div>
-            {% endfor %}
-            <!-- load last pools -->
-        </div>
+            <div class="column">
+                <div class="card c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
+                 <div class="card-header">
+                    <div> {{pool.name}}</div>
+                </div>
+                <div class="card-body"> 
+                    <div> Target: {{pool.target_address}}</div>
+                    <div> {{pool.attack_type}}</div>
+                    <div> Attackers: {{pool.number_attackers}}</div>
+                    <div> RPM: {{pool.rpm}}</div>
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+
 
     </div>
     <div class="columns">

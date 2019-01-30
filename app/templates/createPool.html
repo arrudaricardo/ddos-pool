@@ -1,78 +1,92 @@
 {% extends "base.html" %} {% block content %}
-<div id='' class="container" style="padding:2em">
-    <div class="columns">
-        <div id='form-group'class="column col-6 col-sm-11">
-            <div class="form-group">
-                <label class="form-label" for="input-example-1">Name</label>
-                <input class="form-input" type="text" id="poolName" placeholder="Attack Pool Name" autocomplete="off" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="input-example-1">Target:</label>
-                <input class="form-input" type="text" id="poolTarget" placeholder="Target Adress" autocomplete="off" />
-                <p style="font-size: smaller;">e.g Target:http://www.exemple.com, port:80</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="input-example-1">Comment:</label>
-                <input class="form-input" type="text" id="poolComment" placeholder="Reason of the Attack" autocomplete="off" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="input-example-1">Attack Method:</label>
-                <select id="attackType" class="form-select">
-                    <option>SELECT METHOD</option>
-                    <option>GET flood attack</option>
-                    <option>Custom Code</option>>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label style="font-size: smaller;" class="form-checkbox">
-                    <input  id="terms" type="checkbox" />I agree to the
-                    <a href="#">terms and conditions</a> <i class="form-icon"></i>                </label>
-                <button id='createBtn' class="btn m-2">Create</button>
-            </div>
-
-        </div>
-        <div id='displayCode' class="column col-6 d-invisible hide-sm col-sm-0 ">
-            <pre class="code" data-lang="javascript"><code id='code'> </code></pre>
-
-        </div>
-
+<div class="container">
+  <form id="createForm" class="column is-two-fifths">
+    <div class="field ">
+      <label class="label">Name:</label>
+      <input
+          id="poolName"
+          class="input column is-three-quarters"
+          type="text"
+          placeholder="Attack Pool Name"
+        />
+      <div class="control"></div>
+      <p class="help"></p>
     </div>
-</div>
 
-<!-- MODAL -->
-<div class="modal" id="customCodeModal">
-        <a href="#close" class="modal-overlay close" aria-label="Close"></a>
-        <div class="modal-container">
-          <div class="modal-header">
-            <a  
-              href="#close"
-              class="btn btn-clear float-right close"
-              aria-label="Close"
-            ></a>
-            <div class="modal-title h5">Custom Code</div>
-          </div>
-          <div class="modal-body">
-            <div class="content">
-              <textarea
-                id="CodeArea"
-                class="textarea"
-                placeholder="Javascript Code."
-              ></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <div class="modal-footer">
-              <button id="saveBtn" class="btn btn-primary">Save</button>
-              <a class="btn btn-link close" href="#modals">Close</a>
-            </div>
-          </div>
-        </div>
+    <div class="field ">
+      <label class="label">Target:</label>
+      <div class="control is-flex">
+        <input
+          id="poolTarget"
+          class="input column is-three-quarters"
+          type="text"
+          placeholder="Target Adress"
+        />
+        <input id="poolPort" class="input" type="text" placeholder="Port" />
       </div>
+      <p class="help">e.g Target:http://www.exemple.com, port:80</p>
+    </div>
 
+    <div class="field ">
+      <label class="label">Comment:</label>
+      <div class="control">
+        <input
+          id="poolComment"
+          class="input"
+          type="text"
+          placeholder="Reason of the Attack"
+        />
+      </div>
+    </div>
+
+    <div class="control container is-block">
+      <label class="label">Attack Method:</label>
+      <div class="select">
+        <select id="attackType">
+          <option>GET flood attack</option>
+          <option>Custom Code</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="container" style="padding-top:1em">
+      <label class="checkbox ">
+        <input id="terms" type="checkbox" /> I agree to the
+        <a href="#">terms and conditions</a>
+      </label>
+      <div style="padding:0.5em">
+        <button id="createBtn" type="submit" class="button">Create</button>
+      </div>
+    </div>
+  </form>
+
+  <div id="customCodeModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Custom Code</p>
+        <button class="delete close" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <textarea
+          id="CodeArea"
+          class="textarea"
+          placeholder="Javascript Code."
+        ></textarea>
+      </section>
+      <footer style="display: inline;" class="modal-card-foot">
+        <div class="container">
+          Wrapp in a function named: <code> attack();</code>
+        </div>
+
+        <div class="is-pulled-right">
+          <button id="saveBtn" class="button is-success">Save changes</button>
+          <button class="button close">Cancel</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
 {% endblock %} {% block script %}
 <script>
   //create Pool
@@ -94,59 +108,40 @@
       data: data,
       success: function(response){
         console.log(response)
-        // to do
         //window.location.href = response.redirect
+
       },
       error: function(msg){
           alert(msg)
         console.log(msg)
       }
-
+      
     })
 
   };
 
-  // MODAL 
+ 
+
+
+
+  // open modal if select "custom code"
   document.getElementById("attackType").onchange = function() {
-    let attackType = $("#attackType").val();
-    
-    if ( attackType == "Custom Code") {
-      $("#customCodeModal").addClass("active");
+    if ($("#attackType").val() == "Custom Code") {
+      $("#customCodeModal").addClass("is-active");
        // send basic javascript template to Custom Code text-field
 
        let basic_code = "window.document.getElementById('startButton').onclick = function(){\n//Function to be called.\n\n}"
+
        $("#CodeArea").val(basic_code)
-
-    }else{
-      //request attack script and display in displayCode area
-
-      $.ajax({
-        method: "POST",
-        url: {{url_for('getAttack') | tojson}},
-        data: {'attackType':attackType},
-        success: function(data){
-        console.log(data)
-        $("#displayCode").removeClass('d-invisible');
-        $("#code").text(data);
-        },
-        error: function(msg){
-          console.log(msg)
-        }
-      })
-    }
+    }   
   };
-
   //close modal btn
   $(".close").click(function() {
-    $("#customCodeModal").removeClass("active");
+    $("#customCodeModal").removeClass("is-active");
     $("#CodeArea").empty();
-    $("#code").empty();
-    
   });
   $("#saveBtn").click(function() {
-    $("#customCodeModal").removeClass("active");
-    $("#displayCode").removeClass('d-invisible');
-    $("#code").text($("#CodeArea").val())
+    $("#customCodeModal").removeClass("is-active");
   });
 </script>
 {% endblock %}

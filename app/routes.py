@@ -1,12 +1,12 @@
 from app import app, db
 from .models import Pool
-from flask import render_template, request, jsonify, url_for, redirect, Response,  send_from_directory
+from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory
 
 
 @app.route('/')
 def index():
-    # todo: get the last n Pool Creted 
-    pools = Pool.query.order_by(Pool.id.desc()).limit(10).all()
+    # todo: get the last n Pool Create
+    pools = Pool.query.order_by(Pool.id.desc()).limit(4).all()
     return render_template('index.html', pools=pools)
 
 

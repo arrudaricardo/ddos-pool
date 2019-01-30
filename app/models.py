@@ -7,7 +7,7 @@ class Pool(db.Model):
     name = db.Column(db.String(64), index=True, unique=False)
     target_address = db.Column(db.String(128), index=True, unique=False)
     attack_type = db.Column(db.String(64), index=True, unique=False)
-    custom_code = db.Column(db.String(400), index=True, unique=False, default=None)
+    custom_code = db.Column(db.Text(), index=True, unique=False, default=None)
     wasm = db.Column(db.Boolean(), unique=False, default=False)
     transport_layer = db.Column(db.String(128), index=True, unique=False, default='TCP')
     request_method = db.Column(db.String(32), index=True, unique=False, default='GET')   # GET", "POST", "PUT", "DELETE"
