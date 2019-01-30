@@ -1,11 +1,13 @@
 from app import app, db
 from .models import Pool
-from flask import render_template, request, jsonify, url_for, redirect
+from flask import render_template, request, jsonify, url_for, redirect, Response,  send_from_directory
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # todo: get the last n Pool Creted 
+    pools = Pool.query.order_by(Pool.id.desc()).limit(10).all()
+    return render_template('index.html', pools=pools)
 
 
 @app.route('/pool/<poolid>')
@@ -45,4 +47,10 @@ def create_pool():
             return redirect(url_for('get_pool', poolid=new_pool.id, code=305))
         else:
             return jsonify(error='erro')
+
+@app.route('/getAttack', methods=['POST'])
+def getAttack():
+    attack_type = request.form['attackType']
+    return send_from_directory('templates/attack_script', filename=attack_type+'.jinja2')
+
 
