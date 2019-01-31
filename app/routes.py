@@ -6,8 +6,9 @@ from flask import render_template, request, jsonify, url_for, redirect, Response
 @app.route('/')
 def index():
     # todo: get the last n Pool Create
-    pools = Pool.query.order_by(Pool.id.desc()).limit(4).all()
-    return render_template('index.html', pools=pools)
+    last_pools = Pool.query.order_by(Pool.id.desc()).limit(4).all()
+    popular_pools = Pool.query.order_by(Pool.number_attackers.desc()).limit(4).all()
+    return render_template('index.html', popular_pools=popular_pools, last_pools=last_pools)
 
 
 @app.route('/pool/<poolid>')

@@ -13,36 +13,51 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id='last pools' class="container" style="margin-top:2em">
         <div class="mx-1 "> Last Pools:</div>
         <div class="columns">
-            {% for pool in pools%}
+            {% for pool in last_pools%}
             <div class="column">
-                <div class="card c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
-                 <div class="card-header">
-                    <div> {{pool.name}}</div>
-                </div>
-                <div class="card-body"> 
-                    <div> Target: {{pool.target_address}}</div>
-                    <div> {{pool.attack_type}}</div>
-                    <div> Attackers: {{pool.number_attackers}}</div>
-                    <div> RPM: {{pool.rpm}}</div>
-                </div>
+                <div class="card card-hover c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
+                    <div class="card-header">
+                        <div> {{pool.name}}</div>
+                    </div>
+                    <div class="card-body">
+                        <div> Target: {{pool.target_address}}</div>
+                        <div> {{pool.attack_type}}</div>
+                        <div> Attackers: {{pool.number_attackers}}</div>
+                        <div> RPM: {{pool.rpm}}</div>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
-
-
-    </div>
-    <div class="columns">
-        <div class="column">
-            <!-- load pools with more user -->
+       
+ 
+    {% endfor %}
+</div>
+</div>
+    <div id='last pools' class="container" style="margin-top:2em">
+        <div class="mx-1 "> Popular:</div>
+        <div class="columns">
+            {% for pool in popular_pools%}
+            <div class="column">
+                <div class="card card-hover c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
+                    <div class="card-header">
+                        <div> {{pool.name}}</div>
+                    </div>
+                    <div class="card-body">
+                        <div> Target: {{pool.target_address}}</div>
+                        <div> {{pool.attack_type}}</div>
+                        <div> Attackers: {{pool.number_attackers}}</div>
+                        <div> RPM: {{pool.rpm}}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-
     </div>
 </div>
-
-</div>
-
 
 {% endblock %}
 
