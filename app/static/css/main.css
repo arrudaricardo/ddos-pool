@@ -16,7 +16,7 @@
 textarea {
   width: 100%;
   height: 100%;
-
+  resize: none;
 }
 
 input[type="text"]
@@ -24,4 +24,5 @@ input[type="text"]
     border: 0;
     border-bottom: 1px solid black;
     outline: 0;
+    autocomplete :"off";
 }
