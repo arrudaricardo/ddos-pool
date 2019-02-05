@@ -7,13 +7,16 @@
   <div class="columns">
     <div class="column col-6 col-sm-11">
       <div class="card">
-    <h1>{{pool.name}}</h1>
-    <div id='pool-target'>Target: {{pool.target_address}} </div>
-    <div id='pool-comment'>Comment: {{pool.comment}}</div>
-    
-    <div id='pool-rpm'>RPM: <div style="display: inline;" id='rpm'>{{pool.rpm}}</div>
-    </div>
-    <div id='pool_number_attacker'>Number of Attackers:<div style="display: inline;" id='numberAttakers'>{{pool.number_attackers}}
+    <h1>📇 {{pool.name}}</h1>
+    <div class='m-1 d-inline'>🎯 Target:
+      <code id='pool-target'>{{pool.target_address}} </code></div>
+    <div class='m-1'>💬 Comment:
+      <code  id='pool-comment' > {{pool.comment}}
+        </code> 
+      </div>
+
+    <div class='m-1 d-inline'>👨🏻‍💻 Number of Attackers: 
+      <div style="display: inline"> <code  id='numberAttakers'>{{pool.number_attackers}}</code>
       </div>
     </div>
     
@@ -23,18 +26,18 @@
     </div>
 
 </div>
-  </div>
-  {# CODE #}
-  <div class="column col-6 hide-sm col-sm-0 "> 
-      <pre><code id='displayCode' class="language-javascript"></code></pre>
-    </div>
+</div>
+{# CODE #}
 
+  <div class="column col-6 hide-sm col-sm-0 "><strong>Script:</strong>
+     <div class="" id='displayCode' > </div>
+  </div>
 </div>
 </div>
 
 
 {# MODAL #}
-<div id="termsModal" class="modal modal-sm active" id="modal-id">
+<div id="termsModal" class="modal modal-sm" id="modal-id">
   <div class="modal-container">
     <div class="modal-header">
       <div class="modal-title h5">Agreement</div>

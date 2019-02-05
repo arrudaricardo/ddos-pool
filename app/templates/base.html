@@ -5,17 +5,58 @@
     <meta name="referrer" content="unsafe-url" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>DDOS community</title>
+    <title>DDOS Pool  </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }} " type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
   </head>
 
 
-<body>
-    {% block content %} {% endblock %}
-    {% block script %} {% endblock %}
-</body>
+<body class="m-1">
 
+<header class="navbar p-1" style="box-shadow: 2px 2px 2px lightgrey;">
+    <img alt="logo" src="{{ url_for('static', filename='img/logo.png')}}" onClick="window.location = '/'" style=''
+        height="45" width="50" class="mx-2 float-right c-hand navbar-brand img-fit-contain">
+
+    <section class='navbar-section'>
+
+        <a class='btn btn-link mx-2 info_btn' id='info_btn'> Info. </a>
+        <div class="modal" id="info_modal">
+            <a href="#close" class="modal-overlay" aria-label="Close"></a>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <a href="#close" class="btn btn-clear float-right info_btn" aria-label="Close"></a>
+                    <div class="modal-title h5">Information.</div>
+                </div>
+                <div class="modal-body">
+                    <div class="content">
+                        Hello,<p> this website ...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="https://github.com/arrudaricardo/">App Source code.</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+</header>
+
+
+    {% block content %} {% endblock %}
+   
+</body>
+    {% block script %} {% endblock %}
+
+    <script id=nav_modal>
+        $('.info_btn').click(function(){
+            $("#info_modal").toggleClass('active')
+        })
+
+    </script>
 </html>

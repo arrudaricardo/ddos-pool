@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<div class="container">
+<div class="container" style="padding:2em">
   <div class="columns">
     <div class="column card col-6 col-sm-12">
 
@@ -7,7 +7,7 @@
         <div class="columns">
           <div class="column col-12">
             <div class="form-group">
-              <label class="form-label">Name:</label>
+              <label class="form-label">📇 Name:</label>
               <input id="poolName" class="form-input" type="text" placeholder="Attack Pool Name">
             </div>
           </div>
@@ -16,7 +16,7 @@
 
       <div class="container">
         <div class="form-group">
-          <label class="form-label">Target:</label>
+          <label class="form-label">🎯 Target:</label>
           <div class="columns">
             <div class="column col-8">
               <input id="poolTarget" class="form-input" type="text" placeholder="Target Adress">
@@ -31,7 +31,7 @@
 
       <div class="container">
         <div class="form-group">
-          <label class="form-label">Comment:</label>
+          <label class="form-label">💬 Comment:</label>
           <div class="columns">
             <div class="column">
               <input id="poolComment" class="form-input" type="text" placeholder="Reason of the Attack">
@@ -44,7 +44,7 @@
 
       <div class="container">
         <div class="form-group">
-          <label class="form-label">Attack Method:</label>
+          <label class="form-label">💣 Attack Method:</label>
           <div class="columns col-auto">
             <div class="column col-lg-10">
               <select id="attackType" class="form-select">
@@ -70,8 +70,10 @@
       </div>
 
     </div>
-    <div class="column col-6 hide-sm">
-      <pre><code id='displayCode' class="language-javascript"></code></pre>
+    <div id='codeBox' class="column col-6 hide-sm d-invisible"">
+        <strong>Script:</strong>
+        <div class="" id='displayCode' >
+           </div>        
     </div>
   </div>
 </div>
@@ -151,10 +153,11 @@
       }
     })
   };
-  // open modal if select "custom code"
+// on change option #attackType
   let cacheAttackType = {}
   document.getElementById("attackType").onchange = function () {
-    $('#option-choose').remove()
+    $('#option-choose').remove();
+    $('#codeBox').removeClass('d-invisible');
     let attackType = $("#attackType").val() 
 
     if (attackType == "Custom Code") {

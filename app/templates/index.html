@@ -1,34 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="padding:4em;">
+<div class="container" style="padding:5%;">
     <h1>DDOS Pools</h1>
-    <h2> Create or join a <a href="https://en.wikipedia.org/wiki/Denial-of-service_attack">DOS</a> Attack Pools.</h2>
+    <h2> Create or join a <a onclick="window.open('https://en.wikipedia.org/wiki/Denial-of-service_attack')" href="#">DOS</a> Attack Pools.</h2>
 
     <div class="container">
         <div class="columns">
             <div class="column col-5 py-2 my-2">
                 <div>
-                    <div class="btn" id='createBtn'>Create</div> new Attack Pool
+                    <div class="btn" id='createBtn'>Create new Attack Pool 
                 </div>
             </div>
         </div>
     </div>
 
     <div id='last pools' class="container" style="margin-top:2em">
-        <div class="mx-1 "> Last Pools:</div>
+        <div class="mx-1 "> <b>Last Pools:</b></div>
         <div class="columns">
             {% for pool in last_pools%}
             <div class="column">
                 <div class="card card-hover c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
                     <div class="card-header">
-                        <div> {{pool.name}}</div>
+                        <div> <h5>{{pool.name}}</h4></div>
                     </div>
                     <div class="card-body">
-                        <div> Target: {{pool.target_address}}</div>
-                        <div> {{pool.attack_type}}</div>
-                        <div> Attackers: {{pool.number_attackers}}</div>
-                        <div> RPM: {{pool.rpm}}</div>
+                        <div> <b>🎯Target: </b>{{pool.target_address}}</div>
+                        <div> 💣{{pool.attack_type}}</div>
+                        <div>  <b>👨🏻‍💻Attackers: </b>{{pool.number_attackers}}</div>
                     </div>
                 </div>
             </div>
@@ -38,19 +37,18 @@
 </div>
 </div>
     <div id='last pools' class="container" style="margin-top:2em">
-        <div class="mx-1 "> Popular:</div>
+        <div class="mx-1 "><b>Popular:</b></div>
         <div class="columns">
             {% for pool in popular_pools%}
             <div class="column">
                 <div class="card card-hover c-hand" onclick="window.location.assign('pool/{{pool.id | tojson}}') ">
                     <div class="card-header">
-                        <div> {{pool.name}}</div>
+                        <div><h5>{{pool.name}}</h5> </div>
                     </div>
                     <div class="card-body">
-                        <div> Target: {{pool.target_address}}</div>
-                        <div> {{pool.attack_type}}</div>
-                        <div> Attackers: {{pool.number_attackers}}</div>
-                        <div> RPM: {{pool.rpm}}</div>
+                        <div>  <b>🎯Target: </b>{{pool.target_address}}</div>
+                        <div> 💣 {{pool.attack_type}}</div>
+                        <div>  <b>👨🏻‍💻Attackers: </b>{{pool.number_attackers}}</div>
                     </div>
                 </div>
             </div>
