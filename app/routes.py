@@ -25,7 +25,6 @@ def create_pool():
     if request.method == 'GET':
         return render_template('createPool.html')
     elif request.method == 'POST':
-        # print(request.form.to_dict())
 
         # create Pool in DB
         if request.form['terms'] == 'true':
@@ -52,6 +51,6 @@ def create_pool():
 @app.route('/getAttack', methods=['POST'])
 def getAttack():
     attack_type = request.form['attackType']
-    return send_from_directory('templates/attack_script', filename=attack_type+'.jinja2')
+    return send_from_directory('templates/attack_script', filename=attack_type + '.jinja2')
 
 
