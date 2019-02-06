@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.jinja2" %} {% block content %}
+
+<form autocomplete="off"> 
 <div class="container" style="padding:2em">
   <div class="columns">
     <div class="column card col-6 col-sm-12">
@@ -19,13 +21,12 @@
           <label class="form-label">🎯 Target:</label>
           <div class="columns">
             <div class="column col-8">
-              <input id="poolTarget" class="form-input" type="text" placeholder="Target Adress">
+              <input id="poolTarget" class="form-input" type="text" placeholder="1.1.1.1 or http://link.com">
             </div>
             <div class="column col-4">
               <input id="poolPort" class="form-input" type="text" placeholder="Port" />
             </div>
           </div>
-          <p style="font-size: 70%;" class="">e.g Target:http://www.exemple.com, port:80</p>
         </div>
       </div>
 
@@ -49,8 +50,12 @@
             <div class="column col-lg-10">
               <select id="attackType" class="form-select">
                 <option id='option-choose'>Choose an option</option>
-                <option>GET flood attack</option>
                 <option>Custom Code</option>
+                {%for attack in attacks_script %}
+                <option>{{attack}}</option>
+                {% endfor %}
+                <!-- <option>GET flood attack</option> -->
+                
               </select>
             </div>
           </div>
@@ -65,19 +70,20 @@
           </label>I agree to the <a id="termsLink">terms and conditions</a>
         </div>
         <div style="padding:0.5em">
-          <button id="createBtn" type="submit" class="btn">Create</button>
+          <button id="createBtn" type="submit" class="btn disabled">Create</button>
         </div>
       </div>
 
     </div>
     <div id='codeBox' class="column col-6 hide-sm d-invisible"">
-        <strong>Script:</strong>
-        <div class="" id='displayCode' >
-           </div>        
+        
+       <pre class="m-0"><strong>Script:</strong>  <code class="JavaScript" id='displayCode' >
+        </code></pre> 
+        
     </div>
   </div>
 </div>
-
+</form>
 
           {# Modal Custom code #}
           <div class="modal" id="customCodeModal">
@@ -115,7 +121,11 @@
                   </div>
                   <div class="modal-body" style="height:500px">
                     <div class="content">
-                        Terms
+                      The hosting and the developer of this website do not take any responsibility
+                      and we are not liable for any damage caused through use of this website,
+                      be it indirect, special, incidental or consequential damages
+                      (including but not limited to damages for loss of business, loss of profits,
+                      interruption or the like).
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -153,6 +163,7 @@
       }
     })
   };
+
 // on change option #attackType
   let cacheAttackType = {}
   document.getElementById("attackType").onchange = function () {
@@ -169,9 +180,14 @@
 
     }else{
     
+      //check if custom code in cache
     if (cacheAttackType.hasOwnProperty(attackType)){
 
       $('#displayCode').text(cacheAttackType[attackType]);
+
+      //highlight code
+      hljs.initHighlighting()
+       
 
     }else{
     $.ajax({
@@ -181,6 +197,9 @@
       success: function (response) {
         $('#displayCode').text(response);
 
+        //highlight code
+        hljs.initHighlighting()
+
          cacheAttackType[attackType] = response
       },
       error: function (msg) {
@@ -188,20 +207,22 @@
       }
     })
   }
-
 }
   };
+
   //close modal btn
   $(".close").click(function () {
     $("#CodeArea").empty();
     $('.modal').removeClass("active")
 
   });
+  //save CustomCode
   $("#saveBtn").click(function () {
 
     $('#displayCode').text($("#CodeArea").val());
     $("#customCodeModal").removeClass("active");
-
+    // highlight Block #displayCode
+    hljs.highlightBlock(displayCode)
   });
   //term modal
   $("#termsLink").click(function () {
@@ -213,6 +234,21 @@
  
   });
 
+  //Create btn disable
+  document.getElementById('termCheckbox').onchange = function(){
+
+    if ($("#termCheckbox").prop("checked") === true){
+
+        $("#createBtn").removeClass('disabled')
+ 
+}else{
+$("#createBtn").addClass('disabled')
+}
+}
+  
+ 
+ 
+  
 
 </script>
 {% endblock %}

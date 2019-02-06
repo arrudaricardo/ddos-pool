@@ -1,14 +1,13 @@
 from app import app, db
 from .models import Pool
 from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory
-
-
+from os import listdir, path
 @app.route('/')
 def index():
     # todo: get the last n Pool Create
     last_pools = Pool.query.order_by(Pool.id.desc()).limit(4).all()
     popular_pools = Pool.query.order_by(Pool.number_attackers.desc()).limit(4).all()
-    return render_template('index.html', popular_pools=popular_pools, last_pools=last_pools)
+    return render_template('index.jinja2', popular_pools=popular_pools, last_pools=last_pools)
 
 
 @app.route('/pool/<poolid>')
@@ -17,13 +16,18 @@ def get_pool(poolid):
     if pool is None:
         return 'page not exist'
     else:
-        return render_template('pool.html', pool=pool)
+        return render_template('pool.jinja2', pool=pool)
 
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_pool():
     if request.method == 'GET':
-        return render_template('createPool.html')
+
+        # get all attack script in dir
+        path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
+        attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
+
+        return render_template('createPool.jinja2', attacks_script=attacks_script )
     elif request.method == 'POST':
 
         # create Pool in DB

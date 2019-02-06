@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.jinja2" %}
 
 {% block content %}
 
@@ -9,28 +9,29 @@
       <div class="card">
     <h1>📇 {{pool.name}}</h1>
     <div class='m-1 d-inline'>🎯 Target:
-      <code id='pool-target'>{{pool.target_address}} </code></div>
+      <u id='pool-target'>{{pool.target_address}} </u></div>
     <div class='m-1'>💬 Comment:
-      <code  id='pool-comment' > {{pool.comment}}
-        </code> 
+      <u  id='pool-comment' > {{pool.comment}}
+      </u> 
       </div>
 
-    <div class='m-1 d-inline'>👨🏻‍💻 Number of Attackers: 
-      <div style="display: inline"> <code  id='numberAttakers'>{{pool.number_attackers}}</code>
-      </div>
+    <div class='m-1'>👨🏻‍💻 Number of Attackers: 
+       <div class="d-inline"  id='numberAttakers'>{{pool.number_attackers}}</div>
     </div>
     
     <div class="p-2">
     <div> Script Run/min: <input  class="col-3" id='speed'  style="border:none" placeholder='min.' value="1" min="1" type="number"></div>
-    <button class="col-4 d-block btn" id='startButton'>Start Attack</button>
+    <button class="my-2 col-4 d-block btn" id='startButton'>Start Attack</button>
     </div>
 
 </div>
 </div>
 {# CODE #}
 
-  <div class="column col-6 hide-sm col-sm-0 "><strong>Script:</strong>
-     <div class="" id='displayCode' > </div>
+
+  <div class="column col-6 hide-sm col-sm-0 ">
+    <pre class="m-0"><strong>Script:</strong>  <code class="JavaScript" id='displayCode' >
+    </code></pre> 
   </div>
 </div>
 </div>
@@ -64,7 +65,6 @@
 
 
 {% else %}
-
 {% set attackType = pool.attack_type %}
 <script id="attackCode"> 
   {% include 'attack_script/'+attackType+'.jinja2'%}
@@ -76,6 +76,9 @@
   //display code in DOM
   let customCode = $('#attackCode').text();
   $('#displayCode').text(customCode);
+
+   // highlight Block #displayCode
+  hljs.highlightBlock(displayCode)
   </script>
 
 {% endblock %}

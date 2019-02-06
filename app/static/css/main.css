@@ -19,10 +19,6 @@ textarea {
   resize: none;
 }
 
-input{
-  autocomplete :"off";
-}
-
 input[type="text"]
 {
     border: 0;
