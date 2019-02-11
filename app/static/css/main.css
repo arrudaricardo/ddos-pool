@@ -26,3 +26,14 @@ input[type="text"]
     outline: 0;
 }
 
+#chat{
+  border-style: none; 
+  border-color: Transparent; 
+  overflow: auto;      
+}
+
+.form-control:focus {
+  border-color: #666666;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}

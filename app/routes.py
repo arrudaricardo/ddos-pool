@@ -1,7 +1,10 @@
-from app import app, db
+from app import app, db, socketio
 from .models import Pool
-from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory
+from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory, session
 from os import listdir, path
+from flask_socketio import emit, join_room, leave_room
+from random import randint
+
 @app.route('/')
 def index():
     # todo: get the last n Pool Create
@@ -13,8 +16,12 @@ def index():
 @app.route('/pool/<poolid>')
 def get_pool(poolid):
     pool = Pool.query.filter(Pool.id == poolid).first()
+
+    session['name'] = 'anon_{}'.format(randint(1000,10000))
+    session['room'] = poolid
+
     if pool is None:
-        return 'page not exist'
+        return 'pool do not exist'
     else:
         return render_template('pool.jinja2', pool=pool)
 
@@ -54,7 +61,63 @@ def create_pool():
 
 @app.route('/getAttack', methods=['POST'])
 def getAttack():
+    """send attack type code"""
     attack_type = request.form['attackType']
     return send_from_directory('templates/attack_script', filename=attack_type + '.jinja2')
 
+@app.route('/numAttackers', methods=['POST'])
+def numAttackers():
+    """send updated number of attackers"""
+    pooID = request.form['poolID']
+    pool = Pool.query.filter(Pool.id == pooID).first()
+    return jsonify(numAttackers=pool.number_attackers)
 
+## Socket IO Logic
+
+@socketio.on('joined', namespace='/chat')
+def joined(message):
+    """Sent by clients when they enter a room.
+    A status message is broadcast to all people in the room."""
+
+    room = session.get('room')
+
+    # add number of attackers
+    pool = Pool.query.filter(Pool.id == room).first()
+    pool.number_attackers += 1
+    db.session.commit()
+
+    join_room(room)
+    emit('status', {'msg': session.get('name') + ' has entered the pool.'}, room=room)
+
+
+@socketio.on('text', namespace='/chat')
+def text(message):
+    """Sent by a client when the user entered a new message.
+    The message is sent to all people in the room."""
+    room = session.get('room')
+    emit('message', {'msg': session.get('name') + ': ' + message['msg']}, room=room)
+
+
+@socketio.on('left', namespace='/chat')
+def left(message):
+    """ Run when user disconnecto form the room"""
+    room = session.get('room')
+    leave_room(room)
+    # remove number of attackers for the pool
+    pool = Pool.query.filter(Pool.id == room).first()
+    pool.number_attackers -= 1
+    db.session.commit()
+
+    emit('status', {'msg': session.get('name') + ' has left the pool.'}, room=room)
+
+@socketio.on('disconnect', namespace='/chat')
+def disconnect():
+    """ Run when user disconnecto form the room"""
+    room = session.get('room')
+    leave_room(room)
+    # remove number of attackers for the pool
+    pool = Pool.query.filter(Pool.id == room).first()
+    pool.number_attackers -= 1
+    db.session.commit()
+
+    emit('status', {'msg': session.get('name') + ' has left the pool.'}, room=room)

@@ -3,10 +3,13 @@
 {% block content %}
 
 {# POOL INFO #}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+
 <div class="container" style="padding:2em">
   <div class="columns">
     <div class="column col-6 col-sm-11">
-      <div class="card">
+      <div id='cardInfo' class="card">
     <h1>📇 {{pool.name}}</h1>
     <div class='m-1 d-inline'>🎯 Target:
       <u id='pool-target'>{{pool.target_address}} </u></div>
@@ -26,16 +29,29 @@
 
 </div>
 </div>
-{# CODE #}
 
-
-  <div class="column col-6 hide-sm col-sm-0 ">
+{# DISPLAY CODE #}
+  <div id='displayCodeBox'  class="column col-6 hide-sm col-sm-0 ">
     <pre class="m-0"><strong>Script:</strong>  <code class="JavaScript" id='displayCode' >
     </code></pre> 
   </div>
 </div>
 </div>
 
+{# CHAT BOX #}
+<div id='chatBox' class="container loading">
+  <div class="columns">
+    <div class="column">
+
+        <textarea readonly id="chat" cols="5" rows="5"></textarea><br><br>
+        <input id="text" size="20" placeholder="Enter your message here">
+        <button id="sendText" type="submitText" class="btn">Send</button>
+        <br><br>
+        <button id="disconnectChat" type="submitText" class="btn btn-link">turn chat off</button>
+
+    </div>
+  </div>
+</div>
 
 {# MODAL #}
 <div id="termsModal" class="modal modal-sm" id="modal-id">
@@ -79,6 +95,60 @@
 
    // highlight Block #displayCode
   hljs.highlightBlock(displayCode)
+
+  // set displayCode same height as cardInfo
+  //TODO 
+  document.getElementById('cardInfo').clientHeight + document.getElementById('displayCodeBox').offsetHeight  - document.getElementById('cardInfo').clientHeight
+  $('#displayCode').css('max-height', document.getElementById('cardInfo').clientHeight )
+  $(window).on('resize', function(){
+  document.getElementById('displayCodeBox').offsetHeight - document.getElementById('cardInfo').clientHeight - document.getElementById('cardInfo').clientHeight
+    $('#displayCode').css('max-height', document.getElementById('cardInfo').clientHeight )
+  });
+
+  </script>
+
+  <script id='socketIO' type=text/javascript>
+  $(window).on('load', function() {
+    var socket;
+            $(document).ready(function(){
+
+                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+                socket.on('connect', function() {
+                  $('#chatBox').removeClass('loading')
+                    socket.emit('joined', {});
+                });
+                socket.on('status', function(data) {
+                    $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+                socket.on('message', function(data) {
+                    $('#chat').val($('#chat').val() + data.msg + '\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+                $('#text').keypress(function(e) {
+                    var code = e.keyCode || e.which;
+                    if (code == 13) {
+                        text = $('#text').val();
+                        $('#text').val('');
+                        socket.emit('text', {msg: text});
+                    }
+                });
+            });
+            document.getElementById('disconnectChat').onclick = function () {
+              socket.emit('left', {}, function() {
+                    socket.disconnect();
+                    $('#chatBox').addClass('d-hide')
+                });
+            }
+            document.getElementById('sendText').click = function(){
+              text = $('#text').val();
+              $('#text').val('');
+              socket.emit('text', {msg: text});
+            }
+});
+
+
+
   </script>
 
 {% endblock %}

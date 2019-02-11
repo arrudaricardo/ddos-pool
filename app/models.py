@@ -16,7 +16,7 @@ class Pool(db.Model):
     comment = db.Column(db.String(140), index=True, unique=False)
     rpm = db.Column(db.Integer(), index=True, unique=False, default=0)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    number_attackers = db.Column(db.Integer(), index=True, unique=False, default=0)
+    number_attackers = db.Column(db.Integer(), index=True, unique=True, default=0)
 
     def __repr__(self):
         return f'{self.id}, {self.name}'
@@ -33,4 +33,11 @@ def init_test():
      port=80, transport_layer='TCP', attack_type='DDOS', comment='Lets DDos yahoo',
      attack_message='test', request_method='GET')
     db.session.add(u)
+    db.session.commit()
+
+def reset_attack_num():
+    """reset number of attacker for all the Pools"""
+    pools = Pool.query.all()
+    for pool in pools:
+        pool.number_attackers = 0
     db.session.commit()
