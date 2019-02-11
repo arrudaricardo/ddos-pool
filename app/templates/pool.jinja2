@@ -97,12 +97,11 @@
   hljs.highlightBlock(displayCode)
 
   // set displayCode same height as cardInfo
-  //TODO 
-  document.getElementById('cardInfo').clientHeight + document.getElementById('displayCodeBox').offsetHeight  - document.getElementById('cardInfo').clientHeight
-  $('#displayCode').css('max-height', document.getElementById('cardInfo').clientHeight )
+  $('#displayCode').css('max-height',   document.getElementById('cardInfo').clientHeight - document.getElementById('displayCodeBox').offsetHeight + document.getElementById('cardInfo').clientHeight
+ )
   $(window).on('resize', function(){
-  document.getElementById('displayCodeBox').offsetHeight - document.getElementById('cardInfo').clientHeight - document.getElementById('cardInfo').clientHeight
-    $('#displayCode').css('max-height', document.getElementById('cardInfo').clientHeight )
+    $('#displayCode').css('max-height',  document.getElementById('cardInfo').clientHeight - document.getElementById('displayCodeBox').offsetHeight + document.getElementById('cardInfo').clientHeight
+ )
   });
 
   </script>
