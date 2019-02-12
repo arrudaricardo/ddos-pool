@@ -42,18 +42,21 @@
 </div>
 
 {# CHAT BOX #}
-<div id='chatBox' class="container loading loading-lg">
+<div id='chatBox' class="container">
   <div class="columns">
-    <div class="column">
-
+    <div id='chatArea' class="column loading loading-lg">
+      <div class="container">
+        <div>Chat:</div>
         <textarea readonly id="chat" cols="5" rows="5"></textarea><br><br>
         <input id="text" size="20" placeholder="Enter your message here">
         <button id="sendText" type="submitText" class="btn">Send</button>
-        <br><br>
-        <button id="disconnectChat" type="submitText" class="btn btn-link">turn chat off</button>
-
+      </div>
     </div>
   </div>
+  <div class="container m-0">
+      <div id="disconnectChat" type="submitText" class="d-block-inlinep-0 m=0 btn btn-link">turn chat off</div>
+  </div>
+
 </div>
 
 {# MODAL #}
@@ -119,43 +122,66 @@ $('#toggleCode').click(function(){
   <script id='socketIO' type=text/javascript>
   $(window).on('load', function() {
     var socket;
-            $(document).ready(function(){
+    function connectSockeIO (){
+      socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+      socket.on('connect', function() {
+        $('#chatArea').removeClass('loading');
+        $('#chatArea').removeClass('d-hide');
+        $('#disconnectChat').text("Disconnect to Chat");
 
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
-                socket.on('connect', function() {
-                  $('#chatBox').removeClass('loading')
-                    socket.emit('joined', {});
-                });
-                socket.on('status', function(data) {
-                    $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                });
-                socket.on('message', function(data) {
-                    $('#chat').val($('#chat').val() + data.msg + '\n');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                });
-                $('#text').keypress(function(e) {
-                    var code = e.keyCode || e.which;
-                    if (code == 13) {
-                        text = $('#text').val();
-                        $('#text').val('');
-                        socket.emit('text', {msg: text});
-                    }
-                });
-            });
-            document.getElementById('disconnectChat').onclick = function () {
-              socket.emit('left', {}, function() {
-                    socket.disconnect();
-                    $('#chatBox').addClass('d-hide')
-                });
-            }
-            document.getElementById('sendText').click = function(){
-              text = $('#text').val();
-              $('#text').val('');
+          socket.emit('joined', {});
+      });
+      socket.on('status', function(data) {
+          $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
+          $('#numberAttakers').text(data.numAttackers);  //update num of Attackers
+          $('#chat').scrollTop($('#chat')[0].scrollHeight);
+      });
+      socket.on('message', function(data) {
+          $('#chat').val($('#chat').val() + data.msg + '\n');
+          $('#chat').scrollTop($('#chat')[0].scrollHeight);
+      });
+    }
+
+    let submitText = function(){
+        text = $('#text').val();
+        if (text.length > 0 && text.length <30){
+          $('#text').val('');
               socket.emit('text', {msg: text});
-            }
-});
+        }
+              //error
+      }
+      
+    $('#text').keypress(function(e) {
+        var code = e.keyCode || e.which;
+        if (code == 13) {
+          submitText()
+        }
+    });
+    document.getElementById('sendText').onclick = function() {
+      submitText()
+    }
 
+    
+
+    $(document).ready(function(){connectSockeIO();})
+
+  // event : click disconnectChat Button
+  document.getElementById('disconnectChat').onclick = function () {
+        if (socket.connected){  // check if connect to socket
+          socket.emit('left', {}, function() {
+              socket.disconnect();
+              $('#chatArea').addClass('d-hide');
+              $('#chatArea').addClass('loading');
+              $('#chat').val('') // clean chat textarea 
+          });
+            $(this).text("Connect to Chat");
+        }else {
+          connectSockeIO();
+      }
+
+    }
+
+}); 
 
 
   </script>

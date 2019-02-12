@@ -17,7 +17,7 @@ def index():
 def get_pool(poolid):
     pool = Pool.query.filter(Pool.id == poolid).first()
 
-    session['name'] = 'anon_{}'.format(randint(1000,10000))
+    session['name'] = 'anon_{}'.format(randint(1000,1000))
     session['room'] = poolid
 
     if pool is None:
@@ -30,7 +30,7 @@ def get_pool(poolid):
 def create_pool():
     if request.method == 'GET':
 
-        # get all attack script in dir
+        # send all attack_script in dir to display code
         path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
         attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
 
@@ -39,10 +39,18 @@ def create_pool():
 
         # create Pool in DB
         if request.form['terms'] == 'true':
+            
             if request.form['attackType'] == 'Custom Code':
                 custom_code = request.form['customCode']
+                if len(custom_code) > 1000:
+                    return jsonify(error='custom code too big')  
             else:
                 custom_code = None
+                # check attack codes availibles
+                path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
+                attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
+                if request.form['attackType'] not in attacks_script:
+                    return jsonify(error='attack_code dont exist')  
 
             new_pool = Pool(name=request.form['poolName'],
             target_address=request.form['poolTarget'],
@@ -53,27 +61,19 @@ def create_pool():
 
             db.session.add(new_pool)
             db.session.commit()
-            print(new_pool.id)
 
             return redirect(url_for('get_pool', poolid=new_pool.id, code=305))
-        else:
-            return jsonify(error='erro')
+        else: 
+            return jsonify(error='terms')
 
 @app.route('/getAttack', methods=['POST'])
 def getAttack():
-    """send attack type code"""
+    """send attack type source code"""
     attack_type = request.form['attackType']
     return send_from_directory('templates/attack_script', filename=attack_type + '.jinja2')
 
-@app.route('/numAttackers', methods=['POST'])
-def numAttackers():
-    """send updated number of attackers"""
-    pooID = request.form['poolID']
-    pool = Pool.query.filter(Pool.id == pooID).first()
-    return jsonify(numAttackers=pool.number_attackers)
 
 ## Socket IO Logic
-
 @socketio.on('joined', namespace='/chat')
 def joined(message):
     """Sent by clients when they enter a room.
@@ -87,7 +87,7 @@ def joined(message):
     db.session.commit()
 
     join_room(room)
-    emit('status', {'msg': session.get('name') + ' has entered the pool.'}, room=room)
+    emit('status', {'msg': session.get('name') + ' has entered the pool.', 'numAttackers': pool.number_attackers}, room=room)
 
 
 @socketio.on('text', namespace='/chat')
@@ -96,6 +96,7 @@ def text(message):
     The message is sent to all people in the room."""
     room = session.get('room')
     emit('message', {'msg': session.get('name') + ': ' + message['msg']}, room=room)
+
 
 
 @socketio.on('left', namespace='/chat')
@@ -108,11 +109,13 @@ def left(message):
     pool.number_attackers -= 1
     db.session.commit()
 
-    emit('status', {'msg': session.get('name') + ' has left the pool.'}, room=room)
+    emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():
-    """ Run when user disconnecto form the room"""
+    """ Run when user lose connection form the room
+    User is unable to call disconnect function in client side since disconnect is special func for losing connection
+    """
     room = session.get('room')
     leave_room(room)
     # remove number of attackers for the pool
@@ -120,4 +123,4 @@ def disconnect():
     pool.number_attackers -= 1
     db.session.commit()
 
-    emit('status', {'msg': session.get('name') + ' has left the pool.'}, room=room)
+    emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)
