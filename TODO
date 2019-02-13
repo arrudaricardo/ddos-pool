@@ -1,0 +1,17 @@
+
+BUGS:
+    chat:
+        ☐ negative num_attack in pool after logout/login multiple times
+    routes:
+        ☐ not redirecting user after cratea a new Pool
+    
+New feature:
+    DB:
+        [] remove old pool with no user
+    index:
+        [ ] create a footer 
+    pool:
+        [ ] crete share buttons
+        [ ] new attack codes
+        [ ] reliable attack script
+    

@@ -1,9 +1,13 @@
 from app import app, db, socketio
 from .models import Pool
-from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory, session
+from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory, session, abort
 from os import listdir, path
 from flask_socketio import emit, join_room, leave_room
 from random import randint
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.jinja2'), 404
 
 @app.route('/')
 def index():
@@ -17,11 +21,11 @@ def index():
 def get_pool(poolid):
     pool = Pool.query.filter(Pool.id == poolid).first()
 
-    session['name'] = 'anon_{}'.format(randint(1000,1000))
-    session['room'] = poolid
+    
+    session['room'] = poolid  # socketIO room/chat ID
 
     if pool is None:
-        return 'pool do not exist'
+        return abort(404)
     else:
         return render_template('pool.jinja2', pool=pool)
 
@@ -79,6 +83,7 @@ def joined(message):
     """Sent by clients when they enter a room.
     A status message is broadcast to all people in the room."""
 
+    session['name'] = 'anon_{}'.format(randint(10000,99999))
     room = session.get('room')
 
     # add number of attackers
@@ -121,6 +126,6 @@ def disconnect():
     # remove number of attackers for the pool
     pool = Pool.query.filter(Pool.id == room).first()
     pool.number_attackers -= 1
-    db.session.commit()
+    db.session.commit() 
 
     emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)

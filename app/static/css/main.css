@@ -25,11 +25,19 @@ input[type="text"]
     border-bottom: 1px solid black;
     outline: 0;
 }
+input[type="text"]:focus{
+  outline: none;
+}
 
 #chat{
   border-style: none; 
   border-color: Transparent; 
   overflow: auto;      
+  background-color:#00000008"
+}
+
+#chat:focus{
+  outline: none;
 }
 
 .form-control:focus {

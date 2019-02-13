@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div> <b>🎯Target: </b>{{pool.target_address}}</div>
                         <div> 💣{{pool.attack_type}}</div>
-                        <div>  <b>👨🏻‍💻Attackers: </b>{{pool.number_attackers}}</div>
+                        <div>  <b>👨🏻‍💻Attackers: </b>{{pool.number_attackers if pool.number_attackers >= 0 else 0 }}</div>
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@
       <div id='cardInfo' class="card">
     <h1>📇 {{pool.name}}</h1>
     <div class='m-1 d-inline'>🎯 Target:
-      <u id='pool-target'>{{pool.target_address}} </u></div>
+      <u id='pool-target'>{{pool.target_address}}:{{pool.port}}</u></div>
     <div class='m-1'>💬 Comment:
       <u  id='pool-comment' > {{pool.comment}}
       </u> 
@@ -42,21 +42,22 @@
 </div>
 
 {# CHAT BOX #}
-<div id='chatBox' class="container">
+<div id='chatBox' class="container loading loading-lg">
+  <div id='chatDisplay'class="d-invisible">
   <div class="columns">
-    <div id='chatArea' class="column loading loading-lg">
+    <div id='chatArea' class="column loading-lg">
       <div class="container">
         <div>Chat:</div>
-        <textarea readonly id="chat" cols="5" rows="5"></textarea><br><br>
-        <input id="text" size="20" placeholder="Enter your message here">
-        <button id="sendText" type="submitText" class="btn">Send</button>
+        <textarea readonly   id="chat" cols="5" rows="5"></textarea>
+        <input id="text" type="text" size="20" placeholder="Enter your message here">
+        <button id="sendText" type="submitText" class=" btn btn-sm m-1">Send</button>
       </div>
     </div>
   </div>
   <div class="container m-0">
-      <div id="disconnectChat" type="submitText" class="d-block-inlinep-0 m=0 btn btn-link">turn chat off</div>
+      <div id="disconnectChat" type="submitText" class="d-block-inlinep-0 m=0 btn btn-sm btn-link">turn chat off</div>
   </div>
-
+</div>
 </div>
 
 {# MODAL #}
@@ -91,7 +92,7 @@
 </script>
 {% endif %}
 
-{#  General Code for pool page    #}
+{#  General DOM event #}
 <script type=text/javascript>
   //display code in DOM
   let customCode = $('#attackCode').text();
@@ -117,7 +118,12 @@ $('#toggleCode').click(function(){
     $('#toggleCode').text('Show Attack Code')
   }
 })
+
+$('#chat').click(function(){
+  $('#text').focus()
+})
   </script>
+
 
   <script id='socketIO' type=text/javascript>
   $(window).on('load', function() {
@@ -125,15 +131,18 @@ $('#toggleCode').click(function(){
     function connectSockeIO (){
       socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
       socket.on('connect', function() {
-        $('#chatArea').removeClass('loading');
-        $('#chatArea').removeClass('d-hide');
+        $('#chatBox').removeClass('loading');
+        $('#chatDisplay').removeClass('d-invisible');
+        $('#chatArea').removeClass('d-hide'); // if user closed chat
         $('#disconnectChat').text("Disconnect to Chat");
 
-          socket.emit('joined', {});
+        socket.emit('joined', {});
       });
       socket.on('status', function(data) {
           $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
-          $('#numberAttakers').text(data.numAttackers);  //update num of Attackers
+          $('#numberAttakers').text(
+            function(){ return (data.numAttackers >= 0 ? data.numAttackers : 0) }()  //remove nagtive attack num
+            );  //update num of Attackers
           $('#chat').scrollTop($('#chat')[0].scrollHeight);
       });
       socket.on('message', function(data) {
@@ -171,11 +180,12 @@ $('#toggleCode').click(function(){
           socket.emit('left', {}, function() {
               socket.disconnect();
               $('#chatArea').addClass('d-hide');
-              $('#chatArea').addClass('loading');
+             
               $('#chat').val('') // clean chat textarea 
           });
             $(this).text("Connect to Chat");
         }else {
+          $('#chatBox').addClass('loading');
           connectSockeIO();
       }
 
