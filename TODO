@@ -4,6 +4,8 @@ BUGS:
         ☐ negative num_attack in pool after logout/login multiple times
     routes:
         ☐ not redirecting user after cratea a new Pool
+    create:
+        [ ] displayCode not changing 
     
 New feature:
     DB:

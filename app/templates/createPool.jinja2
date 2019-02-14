@@ -41,15 +41,13 @@
         </div>
       </div>
 
-
-
       <div class="container">
         <div class="form-group">
           <label class="form-label">💣 Attack Method:</label>
           <div class="columns col-auto">
             <div class="column col-lg-10">
               <select id="attackType" class="form-select">
-                <option id='option-choose'>Choose an option</option>
+                <option style="display: none" id='option-choose'>Choose an option</option>
                 <option>Custom Code</option>
                 {%for attack in attacks_script %}
                 <option>{{attack}}</option>
@@ -75,9 +73,11 @@
     </div>
     <div id='codeBox' class="column col-6 hide-sm d-invisible"">
         
-       <pre class="m-0"><strong>Script:</strong>  <code class="JavaScript" id='displayCode' >
-        </code></pre> 
-        
+       <div class="m-0"><strong>Script:</strong>
+        <div  style="max-height: 300px;" class="" id='displayCode' >
+      </div> 
+    </div>
+
     </div>
   </div>
 </div>
@@ -86,19 +86,14 @@
           {# Modal Custom code #}
           <div class="modal" id="customCodeModal">
               <a href="#close" class="modal-overlay" aria-label="Close"></a>
-              <div class="modal-container">
+              <div style="height:100%" class="modal-container">
                 <div class="modal-header">
                   <a href="#close" class="btn btn-clear float-right close" aria-label="Close"></a>
-                  <div class="modal-title h5">Custom Code</div>
+                  <div class="modal-title h5">Custom Code
+                  </div>
                 </div>
-                <div class="modal-body" style="height:500px">
-                  <div class="content">
-                      <textarea
-                      rows="10"
-                      id="CodeArea"
-                      class="textarea"
-                      placeholder="Javascript Code."
-                    ></textarea>
+                <div class="modal-body" >
+                  <div id='codeEditor' class="content">
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -135,6 +130,24 @@
 
 {% endblock %} {% block script %}
 <script>
+  //CodeMirror
+  let codeMirror, displayCodeMirror;
+  $(document).ready(function(){
+    customCodeMirror = CodeMirror(window.document.getElementById('codeEditor'), {
+      value: "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}",
+      mode:  "javascript",
+      // lineNumbers: true,
+    });
+
+      displayCodeMirror = CodeMirror(window.document.getElementById('displayCode'), {
+      value: "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}",
+      mode:  "javascript",
+      readOnly: true
+    });
+
+    displayCodeMirror.setSize("100%","420px")
+    customCodeMirror.setSize("100%","100%")
+  });
   //create Pool
   window.document.getElementById("createBtn").onclick = function () {
     data = {
@@ -144,7 +157,7 @@
       'terms': $("#termCheckbox").prop("checked"),
       'poolComment': $("#poolComment").val(),
       'poolPort': $("#poolPort").val(),
-      'customCode': $("#CodeArea").val()
+      'customCode': codeMirror.getValue()
     };
 
     $.ajax({
@@ -165,27 +178,19 @@
 // on change option #attackType
   let cacheAttackType = {}
   document.getElementById("attackType").onchange = function () {
-    $('#option-choose').remove();
     $('#codeBox').removeClass('d-invisible');
     let attackType = $("#attackType").val() 
 
     if (attackType == "Custom Code") {
+      
       $("#customCodeModal").addClass("active");
-      // send basic javascript template to Custom Code text-field
-      let basic_code =
-        "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}"
-      $("#CodeArea").val(basic_code);
+      customCodeMirror.refresh();
 
     }else{
-    
       //check if custom code in cache
     if (cacheAttackType.hasOwnProperty(attackType)){
 
-      $('#displayCode').text(cacheAttackType[attackType]);
-
-      //highlight code
-      hljs.initHighlighting()
-       
+      displayCodeMirror.getValue(cacheAttackType[attackType])
 
     }else{
     $.ajax({
@@ -193,11 +198,8 @@
       url: {{url_for('getAttack') | tojson}},
       data: {'attackType':attackType},
       success: function (response) {
-        $('#displayCode').text(response);
-
-        //highlight code
-        hljs.initHighlighting()
-
+        displayCodeMirror.setValue(response);
+        console.log(response)
          cacheAttackType[attackType] = response
       },
       error: function (msg) {
@@ -216,11 +218,8 @@
   });
   //save CustomCode
   $("#saveBtn").click(function () {
-
-    $('#displayCode').text($("#CodeArea").val());
+    displayCodeMirror.setValue(customCodeMirror.getValue())
     $("#customCodeModal").removeClass("active");
-    // highlight Block #displayCode
-    hljs.highlightBlock(displayCode)
   });
   //term modal
   $("#termsLink").click(function () {
