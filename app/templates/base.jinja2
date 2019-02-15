@@ -14,14 +14,10 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }} " type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 
-    <link rel="stylesheet"
-    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
-
-<!-- codeMirror -->
-<script src="{{ url_for('static', filename='js/codemirror.js') }}"></script>  
-<link rel="stylesheet" href="{{ url_for('static', filename='css/codemirror.css') }}">
-<script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
+    <!-- codeMirror -->
+    <script src="{{ url_for('static', filename='js/codemirror.js') }}"></script>  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/codemirror.css') }}">
+    <script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
 
   </head>
 
@@ -56,9 +52,9 @@
                 </div>
             </div>
         </div>
-
-
     </section>
+
+
 </header>
 
     {% block content %} {% endblock %}
@@ -66,10 +62,31 @@
 </body>
     {% block script %} {% endblock %}
 
-    <script id=nav_modal>
+    <script>
+        //info btn
         $('.info_btn').click(function(){
             $("#info_modal").toggleClass('active')
         })
+        //toast 
+        let shownToasts = [];
+        function showToast(content, time, status='toast-primary', callback){
+            //status: toast-primary, toast-success, toast-warning or toast-error
+            const toast =  document.createElement("div");
+            toast.className = "m-2 column col-mx-auto col-5 col-sm-12";
+            toast.setAttribute('style',"position: fixed; top:5%; left:50%; transform: translate(-50%, 0)")
 
+            toast.innerHTML = `<div class='toast ${status}'>
+                     <button id='toastBtn' class='btn btn-clear float-right'></button>
+                     ${content} 
+                     </div>`
+             //TODO: finish toast
+            document.getElementsByTagName("body")[0].appendChild(toast);
+            setTimeout(function(){
+                toast.outerHTML = '' 
+                callback()
+            },time)
+            shownToasts.push(toast);
+
+    }
     </script>
 </html>

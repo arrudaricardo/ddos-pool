@@ -132,24 +132,27 @@
 <script>
   //CodeMirror
   let codeMirror, displayCodeMirror;
-  $(document).ready(function(){
+  window.onload = function(){
     customCodeMirror = CodeMirror(window.document.getElementById('codeEditor'), {
       value: "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}",
       mode:  "javascript",
-      // lineNumbers: true,
+      lineNumbers: true
     });
 
       displayCodeMirror = CodeMirror(window.document.getElementById('displayCode'), {
-      value: "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}",
+      //value: "window.document.getElementById('startButton').onclick = function(){\n\n\n\n//Function to be called.\n\n\n\n}",
       mode:  "javascript",
       readOnly: true
     });
 
-    displayCodeMirror.setSize("100%","420px")
-    customCodeMirror.setSize("100%","100%")
-  });
+  displayCodeMirror.setSize("100%","400px")
+  customCodeMirror.setSize("100%","330"); 
+
+  };
   //create Pool
-  window.document.getElementById("createBtn").onclick = function () {
+  window.document.getElementById("createBtn").onclick = function (event) {
+    event.preventDefault();  //stop page refresh after call
+
     data = {
       'poolName': $("#poolName").val(),
       'poolTarget': $("#poolTarget").val(),
@@ -157,7 +160,7 @@
       'terms': $("#termCheckbox").prop("checked"),
       'poolComment': $("#poolComment").val(),
       'poolPort': $("#poolPort").val(),
-      'customCode': codeMirror.getValue()
+      'customCode': displayCodeMirror.getValue()
     };
 
     $.ajax({
@@ -166,11 +169,13 @@
       data: data,
       success: function (response) {
         console.log(response)
-        //window.location.href = response.redirect
+        showToast(response,2000,"toast-success")
+        window.location = window.location.origin + response.url
       },
-      error: function (msg) {
-        alert(msg)
-        console.log(msg)
+      error: function (error) {
+        //TODO: Display error to the user.
+        showToast(error.responseJSON.error, 2000, "toast-error")
+        
       }
     })
   };
@@ -186,6 +191,7 @@
       $("#customCodeModal").addClass("active");
       customCodeMirror.refresh();
 
+
     }else{
       //check if custom code in cache
     if (cacheAttackType.hasOwnProperty(attackType)){
@@ -199,7 +205,6 @@
       data: {'attackType':attackType},
       success: function (response) {
         displayCodeMirror.setValue(response);
-        console.log(response)
          cacheAttackType[attackType] = response
       },
       error: function (msg) {

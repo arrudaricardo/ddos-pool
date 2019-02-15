@@ -4,6 +4,7 @@ from flask import render_template, request, jsonify, url_for, redirect, Response
 from os import listdir, path
 from flask_socketio import emit, join_room, leave_room
 from random import randint
+from sqlalchemy.exc import SQLAlchemyError
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -33,42 +34,57 @@ def get_pool(poolid):
 @app.route('/create', methods=['GET', 'POST'])
 def create_pool():
     if request.method == 'GET':
-
         # send all attack_script in dir to display code
         path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
         attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
 
         return render_template('createPool.jinja2', attacks_script=attacks_script )
+
+    # create a new Pool
     elif request.method == 'POST':
 
+        if request.form['terms'] == 'false':
+            return jsonify(error='terms'), 404
+        
+        if request.form['attackType'] == 'Custom Code':
+            if len(custom_code) > 10000:
+                print("too big")
+                return jsonify(error='custom code too big'), 404
+            elif len(custom_code) < 10:
+                print("too small")
+                return jsonify(error='custom code too big' ), 404
+            custom_code = request.form['customCode']
+        else:
+            custom_code = None
+            # check attack codes availibles
+            path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
+            attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
+            if request.form['attackType'] not in attacks_script:
+                
+                return jsonify(error='attack_code dont exist'), 404
+
         # create Pool in DB
-        if request.form['terms'] == 'true':
-            
-            if request.form['attackType'] == 'Custom Code':
-                custom_code = request.form['customCode']
-                if len(custom_code) > 1000:
-                    return jsonify(error='custom code too big')  
-            else:
-                custom_code = None
-                # check attack codes availibles
-                path_attack_script = path.join(path.dirname(path.abspath(__file__)), "templates", "attack_script")
-                attacks_script = list(map(lambda x: x.split('.')[0], listdir(path=path_attack_script)))
-                if request.form['attackType'] not in attacks_script:
-                    return jsonify(error='attack_code dont exist')  
+        pool_name = request.form['poolName']
+        if len(pool_name) <= 0 or len(pool_name) > 15:
+            return jsonify(error='name not in range'), 404
 
-            new_pool = Pool(name=request.form['poolName'],
-            target_address=request.form['poolTarget'],
-            attack_type=request.form['attackType'],
-            comment=request.form['poolComment'],
-            port=request.form['poolPort'],
-            custom_code=custom_code)
+        new_pool = Pool(name=request.form['poolName'],
+        target_address=request.form['poolTarget'],
+        attack_type=request.form['attackType'],
+        comment=request.form['poolComment'],
+        port=request.form['poolPort'],
+        custom_code=custom_code)
 
+        try:
             db.session.add(new_pool)
             db.session.commit()
+        except SQLAlchemyError as e:
+            return jsonify(error=e), 404
 
-            return redirect(url_for('get_pool', poolid=new_pool.id, code=305))
-        else: 
-            return jsonify(error='terms')
+        return jsonify(url=url_for('get_pool', poolid=new_pool.id)), 200
+        # return redirect(url_for('get_pool', poolid=new_pool.id)), 303
+        
+
 
 @app.route('/getAttack', methods=['POST'])
 def getAttack():

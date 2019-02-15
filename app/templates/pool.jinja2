@@ -34,9 +34,9 @@
 {# DISPLAY CODE #}
   <div id='displayCodeBox'  class="column col-6 hide-sm col-sm-11 ">
       
-
-    <pre class="m-0"><strong>Script:</strong>  <code class="JavaScript" id='displayCode' >
-    </code></pre> 
+   <strong>Script:</strong> 
+   <div id='displayCode' > </div>
+   
   </div>
 </div>
 </div>
@@ -94,20 +94,32 @@
 
 {#  General DOM event #}
 <script type=text/javascript>
-  //display code in DOM
-  let customCode = $('#attackCode').text();
-  $('#displayCode').text(customCode);
 
-   // highlight Block #displayCode
-  hljs.highlightBlock(displayCode)
+// code mirror 
+window.onload = function(){
+displayCodeMirror = CodeMirror(window.document.getElementById('displayCode'), {
+  //value: "",
+  mode:  "javascript",
+  readOnly: true
+});
+
+  //display code in DOM
+  let attackCode = $('#attackCode').text();
+  displayCodeMirror.setValue(attackCode)
+  displayCodeMirror.refresh()
+
+
+
+
 
   // set displayCode same height as cardInfo
-  $('#displayCode').css('max-height', document.getElementById('cardInfo').offsetHeight - 20)
+  displayCodeMirror.setSize("100%", (document.getElementById('cardInfo').offsetHeight - 20).toString())
   $(window).on('resize', function(){
-    $('#displayCode').css('max-height',  
-    document.getElementById('cardInfo').offsetHeight - 20
- )
+    displayCodeMirror.setSize("100%", (document.getElementById('cardInfo').offsetHeight - 20).toString())
+
   });
+
+}
 // togle displayCode if display small 
 $('#toggleCode').click(function(){ 
   if ($('#displayCodeBox').hasClass('hide-sm')) {

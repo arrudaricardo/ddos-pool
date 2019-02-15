@@ -3,9 +3,9 @@ BUGS:
     chat:
         ☐ negative num_attack in pool after logout/login multiple times
     routes:
-        ☐ not redirecting user after cratea a new Pool
+        ✔ not redirecting user after cratea a new Pool @done(19-02-15 15:01)
     create:
-        [ ] displayCode not changing 
+        ✔ displayCode not changing @done(19-02-15 15:10)
     
 New feature:
     DB:
@@ -16,4 +16,6 @@ New feature:
         [ ] crete share buttons
         [ ] new attack codes
         [ ] reliable attack script
+    createPool:
+        [ ] display error 
     
