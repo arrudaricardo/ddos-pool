@@ -72,14 +72,13 @@
         function showToast(content, time, status='toast-primary', callback){
             //status: toast-primary, toast-success, toast-warning or toast-error
             const toast =  document.createElement("div");
-            toast.className = "m-2 column col-mx-auto col-5 col-sm-12";
+            toast.className = "m-2 column col-auto col-mx-auto col-3 col-sm-8 col-xs-12 ";
             toast.setAttribute('style',"position: fixed; top:5%; left:50%; transform: translate(-50%, 0)")
-
+            //TODO: CREATE A FADEIN FADEOUT EFFECT 
             toast.innerHTML = `<div class='toast ${status}'>
-                     <button id='toastBtn' class='btn btn-clear float-right'></button>
-                     ${content} 
+                     <button id='toastBtn' style="margin-left:5px" class='btn btn-clear float-right'onclick="this.parentNode.parentNode.innerHTML = ''" ></button>
+                    ${content}
                      </div>`
-             //TODO: finish toast
             document.getElementsByTagName("body")[0].appendChild(toast);
             setTimeout(function(){
                 toast.outerHTML = '' 

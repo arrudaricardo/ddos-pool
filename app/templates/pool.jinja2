@@ -36,7 +36,7 @@
       
    <strong>Script:</strong> 
    <div id='displayCode' > </div>
-   
+
   </div>
 </div>
 </div>
@@ -189,12 +189,12 @@ $('#chat').click(function(){
   // event : click disconnectChat Button
   document.getElementById('disconnectChat').onclick = function () {
         if (socket.connected){  // check if connect to socket
-          socket.emit('left', {}, function() {
+          // socket.emit('left', {}, function() {});
               socket.disconnect();
               $('#chatArea').addClass('d-hide');
              
               $('#chat').val('') // clean chat textarea 
-          });
+          
             $(this).text("Connect to Chat");
         }else {
           $('#chatBox').addClass('loading');

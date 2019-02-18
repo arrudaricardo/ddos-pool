@@ -47,13 +47,14 @@ def create_pool():
             return jsonify(error='terms'), 404
         
         if request.form['attackType'] == 'Custom Code':
-            if len(custom_code) > 10000:
+            if len(request.form['customCode']) > 10000:
                 print("too big")
-                return jsonify(error='custom code too big'), 404
-            elif len(custom_code) < 10:
+                return jsonify(error='Custom code too big'), 404
+            elif len(request.form['customCode']) < 10:
                 print("too small")
-                return jsonify(error='custom code too big' ), 404
-            custom_code = request.form['customCode']
+                return jsonify(error='Custom code too small' ), 404
+            else:
+                custom_code = request.form['customCode']
         else:
             custom_code = None
             # check attack codes availibles
@@ -66,7 +67,7 @@ def create_pool():
         # create Pool in DB
         pool_name = request.form['poolName']
         if len(pool_name) <= 0 or len(pool_name) > 15:
-            return jsonify(error='name not in range'), 404
+            return jsonify(error='name should be < 15 Char'), 404
 
         new_pool = Pool(name=request.form['poolName'],
         target_address=request.form['poolTarget'],
@@ -81,7 +82,7 @@ def create_pool():
         except SQLAlchemyError as e:
             return jsonify(error=e), 404
 
-        return jsonify(url=url_for('get_pool', poolid=new_pool.id)), 200
+        return jsonify(url=url_for('get_pool', poolid=new_pool.id), id=new_pool.id), 200
         # return redirect(url_for('get_pool', poolid=new_pool.id)), 303
         
 
@@ -120,17 +121,17 @@ def text(message):
 
 
 
-@socketio.on('left', namespace='/chat')
-def left(message):
-    """ Run when user disconnecto form the room"""
-    room = session.get('room')
-    leave_room(room)
-    # remove number of attackers for the pool
-    pool = Pool.query.filter(Pool.id == room).first()
-    pool.number_attackers -= 1
-    db.session.commit()
+# @socketio.on('left', namespace='/chat')
+# def left(message):
+#     """ Run when user disconnecto form the room"""
+#     room = session.get('room')
+#     leave_room(room)
+#     # remove number of attackers for the pool
+#     pool = Pool.query.filter(Pool.id == room).first()
+#     #pool.number_attackers -= 1
+#     #db.session.commit()
 
-    emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)
+#     emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)
 
 @socketio.on('disconnect', namespace='/chat')
 def disconnect():

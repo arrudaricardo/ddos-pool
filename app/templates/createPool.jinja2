@@ -169,12 +169,14 @@
       data: data,
       success: function (response) {
         console.log(response)
-        showToast(response,2000,"toast-success")
-        window.location = window.location.origin + response.url
+        showToast(`Pool ${response.id} successfully created`, 2000, "toast-success", function(){
+          window.location = window.location.origin + response.url
+        })
+        
       },
       error: function (error) {
-        //TODO: Display error to the user.
-        showToast(error.responseJSON.error, 2000, "toast-error")
+        
+        showToast(error.responseJSON.error, 2000, "toast-error", function(){})
         
       }
     })
