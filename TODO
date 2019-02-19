@@ -1,7 +1,7 @@
 
 BUGS:
     chat:
-        ☐ negative num_attack in pool after logout/login multiple times
+        ✔ negative num_attack in pool after logout/login multiple times @done(19-02-19 15:43)
     routes:
         ✔ not redirecting user after cratea a new Pool @done(19-02-15 15:01)
     create:

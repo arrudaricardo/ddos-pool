@@ -2,9 +2,10 @@ from app import app, db, socketio
 from .models import Pool
 from flask import render_template, request, jsonify, url_for, redirect, Response, send_from_directory, session, abort
 from os import listdir, path
-from flask_socketio import emit, join_room, leave_room
+from flask_socketio import emit, join_room, leave_room, disconnect, rooms
 from random import randint
 from sqlalchemy.exc import SQLAlchemyError
+from uuid import uuid4
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -19,9 +20,11 @@ def index():
 
 
 @app.route('/pool/<poolid>')
-def get_pool(poolid):
-    pool = Pool.query.filter(Pool.id == poolid).first()
+def get_pool(poolid):  
 
+    pool = Pool.query.filter(Pool.id == poolid).first()
+    if not session.get('id'):
+        session['id'] = str(uuid4())
     
     session['room'] = poolid  # socketIO room/chat ID
 
@@ -48,10 +51,8 @@ def create_pool():
         
         if request.form['attackType'] == 'Custom Code':
             if len(request.form['customCode']) > 10000:
-                print("too big")
                 return jsonify(error='Custom code too big'), 404
             elif len(request.form['customCode']) < 10:
-                print("too small")
                 return jsonify(error='Custom code too small' ), 404
             else:
                 custom_code = request.form['customCode']
@@ -84,8 +85,6 @@ def create_pool():
 
         return jsonify(url=url_for('get_pool', poolid=new_pool.id), id=new_pool.id), 200
         # return redirect(url_for('get_pool', poolid=new_pool.id)), 303
-        
-
 
 @app.route('/getAttack', methods=['POST'])
 def getAttack():
@@ -93,25 +92,25 @@ def getAttack():
     attack_type = request.form['attackType']
     return send_from_directory('templates/attack_script', filename=attack_type + '.jinja2')
 
-
 ## Socket IO Logic
 @socketio.on('joined', namespace='/chat')
 def joined(message):
     """Sent by clients when they enter a room.
     A status message is broadcast to all people in the room."""
 
-    session['name'] = 'anon_{}'.format(randint(10000,99999))
-    room = session.get('room')
+    session['name'] =  f"anon_{session['id'][:4]}"
 
+    room = session.get('room')
+    
     # add number of attackers
     pool = Pool.query.filter(Pool.id == room).first()
     pool.number_attackers += 1
     db.session.commit()
 
     join_room(room)
+
     emit('status', {'msg': session.get('name') + ' has entered the pool.', 'numAttackers': pool.number_attackers}, room=room)
-
-
+    
 @socketio.on('text', namespace='/chat')
 def text(message):
     """Sent by a client when the user entered a new message.
@@ -120,21 +119,8 @@ def text(message):
     emit('message', {'msg': session.get('name') + ': ' + message['msg']}, room=room)
 
 
-
-# @socketio.on('left', namespace='/chat')
-# def left(message):
-#     """ Run when user disconnecto form the room"""
-#     room = session.get('room')
-#     leave_room(room)
-#     # remove number of attackers for the pool
-#     pool = Pool.query.filter(Pool.id == room).first()
-#     #pool.number_attackers -= 1
-#     #db.session.commit()
-
-#     emit('status', {'msg': session.get('name') + ' has left the pool.', 'numAttackers': pool.number_attackers}, room=room)
-
 @socketio.on('disconnect', namespace='/chat')
-def disconnect():
+def _disconnect():
     """ Run when user lose connection form the room
     User is unable to call disconnect function in client side since disconnect is special func for losing connection
     """
