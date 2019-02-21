@@ -21,7 +21,6 @@
 
   </head>
 
-
 <body class="m-1">
 
 <header class="navbar p-1" style="box-shadow: 2px 2px 2px lightgrey;">
@@ -59,6 +58,21 @@
 
     {% block content %} {% endblock %}
    
+
+
+      <div class="px-2" id="share-buttons" style="position:fixed;right:0; bottom:0;">
+        {% if pool is defined  %}
+    <!-- Twitter --><a href="https://twitter.com/home?status=Hey%20guys,%20join%20my%20DDOS%20Pool!%20%0Awww.xxx.com/pool/{{ pool.id }}" target="_blank"><img src="https://4.bp.blogspot.com/--ISQEurz3aE/UwNI4hDaQMI/AAAAAAAAGS4/ZAgmPiM9Xpk/s1600/twitter.png" rel="noopener" alt="Twitter" /></a>
+    <!-- Reddit --><a href="http://reddit.com/submit?url=Hello%2C%0Ajoin%20my%20DDOS%20Pool!%20%0Awww.xxx.com%2Fpool%2F{{ pool.id }}&title=DDOS%20POOL%20!" target="_blank"><img src="https://4.bp.blogspot.com/-1-mZEa1eiyc/UwNI4JytiFI/AAAAAAAAGSs/AoKmBkkJR-s/s1600/reddit.png" rel="noopener" alt="Reddit" /></a>
+    <!-- Email --><a href="mailto:?&subject=DDOS POOL&body=Heelo,%20join%20my%20DDOS%20Pool!%20%0Awww.xxx.com/pool/{{ pool.id }}"><img src="https://4.bp.blogspot.com/-njgKtNLrPqI/UwNI2o-9WfI/AAAAAAAAGR4/f8da1gBgyLs/s1600/email.png" rel="noopener" alt="Email" /></a>
+  {% else %}
+    <!-- Twitter --><a href="https://twitter.com/share?url=Hello%20guys%2C%0A%0Acheck%20this%20website!%0Awww.xxx.com&text=DDOS%20POOL%20!" target="_blank"><img src="https://4.bp.blogspot.com/--ISQEurz3aE/UwNI4hDaQMI/AAAAAAAAGS4/ZAgmPiM9Xpk/s1600/twitter.png" rel="noopener" alt="Twitter" /></a>
+    <!-- Reddit --><a href="http://reddit.com/submit?url=Hello%20guys%2C%0A%0Acheck%20this%20website!%0Awww.xxx.com&title=DDOS%20POOL%20!" target="_blank"><img src="https://4.bp.blogspot.com/-1-mZEa1eiyc/UwNI4JytiFI/AAAAAAAAGSs/AoKmBkkJR-s/s1600/reddit.png" rel="noopener" alt="Reddit" /></a>
+    <!-- Email --><a href="mailto:?subject=DDOS Attack Pool.&body=Hey,check this nice website.www.xxx.com"><img src="https://4.bp.blogspot.com/-njgKtNLrPqI/UwNI2o-9WfI/AAAAAAAAGR4/f8da1gBgyLs/s1600/email.png" rel="noopener" alt="Email" /></a>
+  {% endif %}
+      </div>
+
+
 </body>
     {% block script %} {% endblock %}
 

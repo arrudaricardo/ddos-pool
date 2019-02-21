@@ -1,5 +1,5 @@
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Pool(db.Model):
@@ -17,6 +17,15 @@ class Pool(db.Model):
     rpm = db.Column(db.Integer(), index=True, unique=False, default=0)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     number_attackers = db.Column(db.Integer(), index=True, unique=True, default=0)
+
+    @classmethod
+    def delete_expire_Pool(cls):
+        """ delete Pool expired and without active users on it"""
+        expiration_days = 10
+        limit = datetime.now() - timedelta(days=expiration_days)   #
+        total_Pools = cls.query.count()
+        cls.query.order_by(cls.timestamp.desc()).offset(20).filter(cls.number_attackers == 0).filter(cls.timestamp <= limit).delete()
+        db.session.commit()
 
     def __repr__(self):
         return f'{self.id}, {self.name}'

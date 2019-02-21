@@ -1,6 +1,7 @@
 {% extends "base.jinja2" %} {% block content %}
 
 <form autocomplete="off"> 
+<fieldset>
 <div class="container" style="padding:2em">
   <div class="columns">
     <div class="column card col-6 col-sm-12">
@@ -81,6 +82,7 @@
     </div>
   </div>
 </div>
+</fieldset>>
 </form>
 
           {# Modal Custom code #}
@@ -153,6 +155,8 @@
   window.document.getElementById("createBtn").onclick = function (event) {
     event.preventDefault();  //stop page refresh after call
 
+    $('fieldset').prop('disabled', function(i, v) { return !v; });  // toggle fieldset disabled 
+
     data = {
       'poolName': $("#poolName").val(),
       'poolTarget': $("#poolTarget").val(),
@@ -169,14 +173,16 @@
       data: data,
       success: function (response) {
         console.log(response)
-        showToast(`Pool ${response.id} successfully created`, 2000, "toast-success", function(){
+        showToast(`Pool ID: ${response.id} successfully created!`, 2000, "toast-success", function(){
           window.location = window.location.origin + response.url
         })
         
       },
       error: function (error) {
-        
+
         showToast(error.responseJSON.error, 2000, "toast-error", function(){})
+
+        $('fieldset').prop('disabled', function(i, v) { return !v; });  // toggle fieldset disabled 
         
       }
     })

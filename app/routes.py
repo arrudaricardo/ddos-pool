@@ -21,7 +21,6 @@ def index():
 
 @app.route('/pool/<poolid>')
 def get_pool(poolid):  
-
     pool = Pool.query.filter(Pool.id == poolid).first()
     if not session.get('id'):
         session['id'] = str(uuid4())
@@ -32,7 +31,6 @@ def get_pool(poolid):
         return abort(404)
     else:
         return render_template('pool.jinja2', pool=pool)
-
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_pool():
@@ -47,7 +45,8 @@ def create_pool():
     elif request.method == 'POST':
 
         if request.form['terms'] == 'false':
-            return jsonify(error='terms'), 404
+            # term not accept 
+            return jsonify(error='Term not accepted'), 404
         
         if request.form['attackType'] == 'Custom Code':
             if len(request.form['customCode']) > 10000:
@@ -66,9 +65,9 @@ def create_pool():
                 return jsonify(error='attack_code dont exist'), 404
 
         # create Pool in DB
-        pool_name = request.form['poolName']
-        if len(pool_name) <= 0 or len(pool_name) > 15:
-            return jsonify(error='name should be < 15 Char'), 404
+        pool_name = request.form['poolName'].strip()
+        if len(pool_name) > 15 or len(pool_name) <= 4:
+            return jsonify(error='Pool name size not valid.'), 404
 
         new_pool = Pool(name=request.form['poolName'],
         target_address=request.form['poolTarget'],
@@ -117,7 +116,6 @@ def text(message):
     The message is sent to all people in the room."""
     room = session.get('room')
     emit('message', {'msg': session.get('name') + ': ' + message['msg']}, room=room)
-
 
 @socketio.on('disconnect', namespace='/chat')
 def _disconnect():
