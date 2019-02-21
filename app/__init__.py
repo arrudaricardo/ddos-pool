@@ -16,7 +16,7 @@ from app import routes, models
 
  # init BackgroundScheduler job
 scheduler = BackgroundScheduler()
-scheduler.add_job(models.Pool.delete_expire_Pool, trigger='interval', seconds=99999)
+scheduler.add_job(models.Pool.delete_expire_Pool, trigger='interval', seconds=20)
 scheduler.start()
 
 models.reset_attack_num()

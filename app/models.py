@@ -21,10 +21,12 @@ class Pool(db.Model):
     @classmethod
     def delete_expire_Pool(cls):
         """ delete Pool expired and without active users on it"""
-        expiration_days = 10
-        limit = datetime.now() - timedelta(days=expiration_days)   #
+        expiration_days = 5
+        limit = datetime.now() - timedelta(days=expiration_days)   #days=expiration_days
         total_Pools = cls.query.count()
-        cls.query.order_by(cls.timestamp.desc()).offset(20).filter(cls.number_attackers == 0).filter(cls.timestamp <= limit).delete()
+        filter_pools = cls.query.order_by(cls.timestamp.desc()).offset(10).from_self().filter(cls.number_attackers == 0).filter(cls.timestamp <= limit)
+        for pool in filter_pools:
+            cls.query.filter(cls.id == pool.id).delete()
         db.session.commit()
 
     def __repr__(self):
